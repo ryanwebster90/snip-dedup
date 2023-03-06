@@ -36,6 +36,7 @@ which will save the de-dup'd metadata to /output/path. You may also check the fi
 ## Finding images overfit by Stable Diffusion
 
 We have found several more images verbatim copied by Stable Diffusion:
+![sylvester_stallone]
 
 
 
