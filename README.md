@@ -35,9 +35,10 @@ which will save the de-dup'd metadata to /output/path. You may also check the fi
 
 ## Finding images overfit by Stable Diffusion
 
-We have found several more images verbatim copied by Stable Diffusion:
-![sylvester_stallone]
+By analyzing the most duplicated images, we have found several more images verbatim copied by Stable Diffusion, posing a copyright problem:
 
+![sylvester stallone](https://github.com/ryanwebster90/snip-dedup/blob/main/overfit_2.jpeg)
+![hopped up logo](https://github.com/ryanwebster90/snip-dedup/blob/main/overfit_2.jpeg)
 
 
 ## Note on False positives
