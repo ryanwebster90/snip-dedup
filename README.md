@@ -39,9 +39,14 @@ We have found several more images verbatim copied by Stable Diffusion:
 
 
 
+## Note on False positives
+We noticed many images labled as dup by SNIP but not by raw feats are in fact newar duplicates, for example:
 
 ![Chess1](https://en.chessok.net/uploads/posts/2017-09/1506718434_knight-on-the-left-1.nc3.jpg)
 ![Chess2](https://m.media-amazon.com/images/I/51jNRpWUCjL.jpg)
+
+you may check a list of (randomly sampled) detected duplicate pairs [here](https://docs.google.com/spreadsheets/d/1Eq46U3MbTXzNoLCvnHLcw64X3bWE3ZE8zMJVQU9_gCg/edit?usp=sharing)
+
 
 ## Semantic Search
 
