@@ -22,7 +22,6 @@ def deduplicate_l2b(metadata_path,new_path,dup_file = 'is_dup_mlp_1024_128_gelu_
         # take only non-dupped (uniques)
         non_dup_chunk = np.logical_not(non_dup_chunk)
         
-        print(non_dup_chunk[:10])
         # make sure there is at least one unique
         non_dup_chunk[0] = True
         
