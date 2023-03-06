@@ -27,12 +27,21 @@ Required packages are torch, faiss, numpy and fire.
 **
 We assume you have all the metadata for laion-2b-en vith14 and some of the features for verification. You may download the parquet files [here](https://huggingface.co/datasets/laion/laion2B-en). After, you may use the file "is_dup_mlp_1024_128_gelu_snn_2layer_notext.npy" above to remove all non-duplicates. The index within this array corresponds to the index within the parquet files.
 
-You may then create a set with duplicates removed with 
+You may then create a set with duplicates removed with
+
+python dedup_l2b.py /path/to/metadata /output/path
+
+which will save the de-dup'd metadata to /output/path. You may also check the fidelity of the duplicates by randomly sampling labeled duplicates, and using SNIP to detect its dup. You may do that with retrieve_dup_urls_demo.py.
+
+## Finding images overfit by Stable Diffusion
+
+We have found several more images verbatim copied by Stable Diffusion:
 
 
 
 
-
+![Chess1](https://en.chessok.net/uploads/posts/2017-09/1506718434_knight-on-the-left-1.nc3.jpg)
+![Chess2](https://m.media-amazon.com/images/I/51jNRpWUCjL.jpg)
 
 ## Semantic Search
 
