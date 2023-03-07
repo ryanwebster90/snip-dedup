@@ -1,0 +1,7 @@
+# Config file for the ruff linting tool
+# https://github.com/charliermarsh/ruff
+
+# Rules to ignore
+ignore = [
+  "E501", # line length violations
+]
