@@ -1,10 +1,28 @@
-# snip-dedup
+# Overview
+You will be able to download a de-duplicated LAION-2B-en in this repository. For example, to download and de duplicate the first 10 metadata files and de-duplicate them
+```python
+python download_deduplicated_metadata.py output_folder --start 0 --end 10 --dl_dedup_set True
+```
+* **start** Start index of metadata file you want to download
+* **end**   End index of metadata file you want to download
+* **dl_dedup_set** boolean whether to download the de-dup binary file
+
+Then, you may download (dedplicated) laion2b with the awesome [img2dataset](https://github.com/rom1504/img2dataset).
+
+You can also do with SNIP (coming soon...)
+- [ ] Train SNIP Indices on your features
+- [ ] Download full or sharded SNIP indices for LAION exploration
+- [ ] Compress your features with SNIP descriptors
+- [ ] Read our research paper
+
+
+# About
 
 SNIP is a very compact index (25GB) that has found roughly half a billion duplicates on the LAION-2B-en dataset (or roughly 1/4 the images), taking just several days on a standard computer with 32GB of RAM. We believe the community will benefit from such a dataset, in light of recent research showing the copyright and privacy risks associated with training generative models on highly duplicated datasets.
 
 
 ** DISCLAIMER ** 
-Due to the scale of the dataset, there is still a chance our analysis is false. Use at your own risk. Help for better de-duiplication (higher acc, higher recall) is very much appreciated. Taking raw CLIP features as the ground truth for exact duplicates, we get nearly 81% precision (and likely much higher for near duplicates, see below).
+Use at your own risk. Help for better de-duiplication (higher acc, higher recall) is very much appreciated. Taking raw CLIP features as the ground truth for exact duplicates, we get nearly 81% precision (and likely much higher for near duplicates, see below).
 
 We release this index for public use and exploration of the LAION-2B-en dataset (more indices coming soon). Soon we will release tools to train your own SNIP indices as well as our scientific paper discussing the method in more detail.
 
