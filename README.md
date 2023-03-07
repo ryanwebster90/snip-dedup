@@ -1,6 +1,8 @@
 # snip-dedup
 
-SNIP is a very compact index (25GB) that has found roughly half a billion duplicates on the LAION-2B-en dataset (or roughly 1/4 the images), taking just several days on a standard computer with 32GB of RAM. We believe the community will benefit from such a dataset, in light of recent research showing the copyright and privacy risks associated with training generative models on highly duplicated datasets.
+SNIP is a very compact index (25GB) that has found roughly half a billion duplicates on the LAION-2B-en dataset. You may download the de-duplicated dataset below.
+
+SNIP de-duplicated L2B on a standard home computer, taking just several days. We believe the community will benefit from such a dataset, in light of recent research showing the copyright and privacy risks associated with training generative models on highly duplicated datasets, as well as SNIP for a de-duplication, compression and retrieval tool.
 
 ## Install
 
