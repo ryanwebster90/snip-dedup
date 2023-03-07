@@ -1,0 +1,8 @@
+[build.targets.sdist]
+exclude = [
+  "/.github",
+  "/docs",
+]
+
+[build.targets.wheel]
+packages = ["snip_dedup"]
