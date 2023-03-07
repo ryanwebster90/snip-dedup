@@ -1,6 +1,5 @@
 # Overview
-You will be able to download a de-duplicated LAION-2B-en in this repository. For example, to download and de duplicate the first 10 metadata files and de-duplicate them
-```python
+You will be able to download a de-duplicated LAION-2B-en in this repository. For example, to download and de duplicate the first 10 metadata files
 python download_deduplicated_metadata.py output_folder --start 0 --end 10 --dl_dedup_set True
 ```
 * **start** Start index of metadata file you want to download
