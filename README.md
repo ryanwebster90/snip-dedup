@@ -1,13 +1,29 @@
-# Overview
-You will be able to download a de-duplicated LAION-2B-en in this repository. For example, to download and de duplicate the first 10 metadata files
-```python
-python download_deduplicated_metadata.py output_folder --start 0 --end 10 --dl_dedup_set True
-```
-* **start** Start index of metadata file you want to download
-* **end**   End index of metadata file you want to download
-* **dl_dedup_set** boolean whether to download the de-dup binary file
+# snip-dedup
 
-Then, you may download (dedplicated) laion2b with the awesome [img2dataset](https://github.com/rom1504/img2dataset).
+SNIP is a very compact index (25GB) that has found roughly half a billion duplicates on the LAION-2B-en dataset (or roughly 1/4 the images), taking just several days on a standard computer with 32GB of RAM. We believe the community will benefit from such a dataset, in light of recent research showing the copyright and privacy risks associated with training generative models on highly duplicated datasets.
+
+## Install
+
+```sh
+pip install --upgrade snip-dedup
+```
+
+## Usage
+
+```sh
+# List available commands
+snip --help
+snip download --help
+
+# Download and deduplicate the 10 first shards of the dataset
+snip download --start 0 --end 10
+```
+
+Then, you may download (deduplicated) laion2b images with the awesome [img2dataset](https://github.com/rom1504/img2dataset).
+
+You may check the fidelity of the duplicates by randomly sampling labeled duplicates, and using SNIP to detect its dup. You may do that with retrieve_dup_urls_demo.py (note you will need the original metadata files for this)
+
+## Roadmap
 
 You can also do with SNIP (coming soon...)
 - [ ] Train SNIP Indices on your features
@@ -16,11 +32,7 @@ You can also do with SNIP (coming soon...)
 - [ ] Compress your features with SNIP descriptors
 - [ ] Read our research paper
 
-
-# About
-
-SNIP is a very compact index (25GB) that has found roughly half a billion duplicates on the LAION-2B-en dataset (or roughly 1/4 the images), taking just several days on a standard computer with 32GB of RAM. We believe the community will benefit from such a dataset, in light of recent research showing the copyright and privacy risks associated with training generative models on highly duplicated datasets.
-
+## About
 
 ** DISCLAIMER ** 
 Use at your own risk. Help for better de-duiplication (higher acc, higher recall) is very much appreciated. Taking raw CLIP features as the ground truth for exact duplicates, we get nearly 81% precision (and likely much higher for near duplicates, see below).
@@ -38,14 +50,6 @@ You may find the following necessary files here:
 Other:
 
 [cumulative sizes of features (for indexing sharded files)](https://drive.google.com/file/d/1OdVt5rjYw55XfMhsQSdqcVOP7lG2qj4W/view?usp=sharing)
-
-
-## Setup
-
-More coming soon...
-
-
-You may check the fidelity of the duplicates by randomly sampling labeled duplicates, and using SNIP to detect its dup. You may do that with retrieve_dup_urls_demo.py (note you will need the original metadata files for this)
 
 ## Finding images overfit by Stable Diffusion
 
@@ -67,17 +71,3 @@ you may check a list of (randomly sampled) detected duplicate pairs [here](https
 ## Semantic Search
 
 SNIP can also be used for semantic search. At just 25GB, it still can return the same k-NN's compared to exhaustive search roughly a third of the time, over 2.15B database vectors. 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
