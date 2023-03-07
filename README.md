@@ -1,5 +1,6 @@
 # Overview
 You will be able to download a de-duplicated LAION-2B-en in this repository. For example, to download and de duplicate the first 10 metadata files
+```python
 python download_deduplicated_metadata.py output_folder --start 0 --end 10 --dl_dedup_set True
 ```
 * **start** Start index of metadata file you want to download
@@ -10,7 +11,8 @@ Then, you may download (dedplicated) laion2b with the awesome [img2dataset](http
 
 You can also do with SNIP (coming soon...)
 - [ ] Train SNIP Indices on your features
-- [ ] Download full or sharded SNIP indices for LAION exploration
+- [ ] Download full or sharded SNIP indices for various CLIP networks
+- [ ] Do semantic search with extremely compact indices (25 GB or less) on billions of images
 - [ ] Compress your features with SNIP descriptors
 - [ ] Read our research paper
 
