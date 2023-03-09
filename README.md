@@ -1,6 +1,6 @@
 # snip-dedup
 
-[![PyPI - Version](https://img.shields.io/pypi/v/hatch.svg?logo=pypi&label=PyPI&logoColor=gold)](https://pypi.org/project/snip-dedup/)
+[![PyPI - Version](https://img.shields.io/pypi/v/snip-dedup.svg?logo=pypi&label=PyPI&logoColor=gold)](https://pypi.org/project/snip-dedup/)
 [![linting - Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v0.json)](https://github.com/charliermarsh/ruff)
 [![format - Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![license - MIT](https://img.shields.io/badge/license-MIT-9400d3.svg)](https://spdx.org/licenses/)
@@ -81,13 +81,19 @@ SNIP can also be used for semantic search. At just 25GB, it still can return the
 
 ## Contribute
 
+Contributions are welcome.
+Usually, the best way is first to open an issue to discuss things.
+
 This python project uses the [`hatch`][hatch] project manager.
 Dependencies are specified inside the `pyproject.toml` file, and build configs inside the `hatch.toml` file.
 As such you can enter the isolated development environment with `hatch shell` from inside the repository.
 
+The code should be documented following the [Numpy docstring standard][docstring].
+
 To avoid silly mistakes, the code is checked with [pyright][pyright].
 To ensure a consistent styling, all python code is formatted with [black][black] and we use the [ruff][ruff] linter.
-Once you have installed them, you can check that the code is consistent with:
+Remark that these can usually get installed in your editor, such as VS Code, to view the checks directly in the code.
+Once you have installed them (suggested via [pipx][pipx]), you can check that the code is consistent with:
 
 ```sh
 hatch run check  # check for mistakes via static analysis
@@ -95,15 +101,16 @@ hatch run format # check formatting of all python files
 hatch run lint   # check linting rules
 ```
 
-TODO: check pyright, formatting and linter in CI
+STILL TODO:
 
-[ ] CI
-[ ] check max file size on CI to prevent pushing data
-[ ] add docs. numpy docstring standard https://numpydoc.readthedocs.io/en/latest/format.html
-[ ] auto publish github action. example at https://github.com/ofek/hatch-showcase/blob/master/.github/workflows/build.yml
-[ ] add tests?
+- [ ] add docs / tutorial
+- [ ] add tests
+- [ ] check max file size on CI to prevent pushing data
+- [ ] auto publish github action. example at https://github.com/ofek/hatch-showcase/blob/master/.github/workflows/build.yml
 
 [hatch]: https://github.com/pypa/hatch
 [pyright]: https://github.com/microsoft/pyright
 [black]: https://github.com/psf/black
 [ruff]: https://github.com/charliermarsh/ruff
+[pipx]: https://github.com/pypa/pipx
+[docstring]: https://numpydoc.readthedocs.io/en/latest/format.html
