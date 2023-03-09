@@ -37,3 +37,36 @@ jobs:
       # build the python package
       - name: Build the snip-dedup package
         run: hatch build
+  
+  check-format:
+    name: Check that code is formatted with Black
+    runs-on: ubuntu-latest
+    steps:
+      # git clone the repository
+      - uses: actions/checkout@v3
+
+      # install python (would be nice if this supported hatch)
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.8'
+
+      # cache package dependencies
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/pip
+            ~/.local/pipx
+            ~/.local/share/hatch
+          key: ${{ matrix.build }}-format-${{ hashFiles('pyproject.toml', 'hatch.toml') }}
+
+      # install black and hatch via pipx to have it isolated
+      - name: Install pipx & hatch
+        run: |
+          python -m pip install --user pipx
+          python -m pipx ensurepath
+          pipx install hatch
+          pipx install black
+
+      # check code formatting
+      - name: Check code formatting
+        run: hatch run format
