@@ -5,34 +5,81 @@ on:
   push:
     branches: [ main ]
 
+env:
+  PYTHON_VERSION: '3.8'
+  TOOLING_CACHE_KEY: '001' # increment to force new cache creation
+
 jobs:
+  tooling-install:
+    name: Install and cache tooling for all other jobs
+    runs-on: ubuntu-latest
+    env:
+    steps:
+      # install python
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      # restore tooling installation cache
+      - uses: actions/cache/restore@v3
+        with:
+          path: |
+            ~/.cache/pip
+            ~/.local/pipx
+          key: tooling-${{ env.TOOLING_CACHE_KEY }}
+          restore-keys: tooling
+
+      # install tooling via pipx to have them isolated
+      - name: Install pipx & tooling
+        run: |
+          python -m pip install --user pipx
+          python -m pipx ensurepath
+          pipx install hatch
+          pipx install pyright
+          pipx install ruff
+
+      # cache tooling installation
+      - uses: actions/cache/save@v3
+        with:
+          path: |
+            ~/.cache/pip
+            ~/.local/pipx
+          key: tooling-${{ env.increment-cache-key }}
+
   build:
     name: Build snip-dedup package
+    needs: tooling-install
     runs-on: ubuntu-latest
     steps:
       # git clone the repository
       - uses: actions/checkout@v3
 
-      # install python (would be nice if this supported hatch)
+      # install python
       - uses: actions/setup-python@v4
         with:
-          python-version: '3.8'
+          python-version: ${{ env.PYTHON_VERSION }}
 
-      # cache package dependencies
-      - uses: actions/cache@v3
+      # restore tooling installation cache
+      - uses: actions/cache/restore@v3
         with:
           path: |
             ~/.cache/pip
             ~/.local/pipx
-            ~/.local/share/hatch
-          key: ${{ matrix.build }}-build-${{ hashFiles('pyproject.toml', 'hatch.toml') }}
+          key: tooling-${{ env.TOOLING_CACHE_KEY }}
+          restore-keys: tooling
 
-      # install hatch via pipx to have it isolated
-      - name: Install pipx & hatch
+      # install hatch via pipx (where we cached it)
+      - name: Install hatch
         run: |
           python -m pip install --user pipx
           python -m pipx ensurepath
           pipx install hatch
+
+      # cache dependencies
+      - uses: actions/cache@v3
+        with:
+          path: ~/.local/share/hatch
+          key: build-${{ hashFiles('pyproject.toml', 'hatch.toml') }}
 
       # build the python package
       - name: Build the snip-dedup package
@@ -42,31 +89,89 @@ jobs:
     name: Check that code is formatted with Black
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - run: pip install black
+      - run: black --check snip_dedup/
+
+  check-pyright:
+    name: Check that the code pass all the pyright checks
+    needs: tooling-install
+    runs-on: ubuntu-latest
+    steps:
       # git clone the repository
       - uses: actions/checkout@v3
 
-      # install python (would be nice if this supported hatch)
+      # install python
       - uses: actions/setup-python@v4
         with:
-          python-version: '3.8'
+          python-version: ${{ env.PYTHON_VERSION }}
 
-      # cache package dependencies
-      - uses: actions/cache@v3
+      # restore tooling installation cache
+      - uses: actions/cache/restore@v3
         with:
           path: |
             ~/.cache/pip
             ~/.local/pipx
-            ~/.local/share/hatch
-          key: ${{ matrix.build }}-format-${{ hashFiles('pyproject.toml', 'hatch.toml') }}
+          key: tooling-${{ env.TOOLING_CACHE_KEY }}
+          restore-keys: tooling
 
-      # install black and hatch via pipx to have it isolated
-      - name: Install pipx & hatch
+      # install pyright via pipx (where we cached it)
+      - name: Install pyright
         run: |
           python -m pip install --user pipx
           python -m pipx ensurepath
           pipx install hatch
-          pipx install black
+          pipx install pyright
 
-      # check code formatting
-      - name: Check code formatting
-        run: hatch run format
+      # cache dependencies
+      - uses: actions/cache@v3
+        with:
+          path: ~/.local/share/hatch
+          key: pyright-${{ hashFiles('pyproject.toml', 'hatch.toml') }}
+
+      # check code with pyright
+      - name: Check the package code with pyright
+        run: hatch run check
+
+  check-lint:
+    name: Check that the code pass the linter checks
+    needs: tooling-install
+    runs-on: ubuntu-latest
+    steps:
+      # git clone the repository
+      - uses: actions/checkout@v3
+
+      # install python
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      # restore tooling installation cache
+      - uses: actions/cache/restore@v3
+        with:
+          path: |
+            ~/.cache/pip
+            ~/.local/pipx
+          key: tooling-${{ env.TOOLING_CACHE_KEY }}
+          restore-keys: tooling
+
+      # install ruff via pipx (where we cached it)
+      - name: Install ruff
+        run: |
+          python -m pip install --user pipx
+          python -m pipx ensurepath
+          pipx install hatch
+          pipx install ruff
+
+      # cache dependencies
+      - uses: actions/cache@v3
+        with:
+          path: ~/.local/share/hatch
+          key: pyright-${{ hashFiles('pyproject.toml', 'hatch.toml') }}
+
+      # check code with linter
+      - name: Check the package code with the linter
+        run: hatch run lint
