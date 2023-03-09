@@ -7,13 +7,14 @@ on:
 
 env:
   PYTHON_VERSION: '3.8'
-  TOOLING_CACHE_KEY: '001' # increment to force new cache creation
+  TOOLING_CACHE_KEY: '006' # increment to force new cache creation
+  PIPX_HOME: /home/runner/.local/pipx
+  PIPX_BIN_DIR: /home/runner/.local/bin
 
 jobs:
   tooling-install:
     name: Install and cache tooling for all other jobs
     runs-on: ubuntu-latest
-    env:
     steps:
       # install python
       - uses: actions/setup-python@v4
@@ -26,8 +27,8 @@ jobs:
           path: |
             ~/.cache/pip
             ~/.local/pipx
+            ~/.local/bin
           key: tooling-${{ env.TOOLING_CACHE_KEY }}
-          restore-keys: tooling
 
       # install tooling via pipx to have them isolated
       - name: Install pipx & tooling
@@ -44,7 +45,8 @@ jobs:
           path: |
             ~/.cache/pip
             ~/.local/pipx
-          key: tooling-${{ env.increment-cache-key }}
+            ~/.local/bin
+          key: tooling-${{ env.TOOLING_CACHE_KEY }}
 
   build:
     name: Build snip-dedup package
@@ -65,6 +67,7 @@ jobs:
           path: |
             ~/.cache/pip
             ~/.local/pipx
+            ~/.local/bin
           key: tooling-${{ env.TOOLING_CACHE_KEY }}
           restore-keys: tooling
 
@@ -115,6 +118,7 @@ jobs:
           path: |
             ~/.cache/pip
             ~/.local/pipx
+            ~/.local/bin
           key: tooling-${{ env.TOOLING_CACHE_KEY }}
           restore-keys: tooling
 
@@ -155,6 +159,7 @@ jobs:
           path: |
             ~/.cache/pip
             ~/.local/pipx
+            ~/.local/bin
           key: tooling-${{ env.TOOLING_CACHE_KEY }}
           restore-keys: tooling
 
@@ -170,7 +175,7 @@ jobs:
       - uses: actions/cache@v3
         with:
           path: ~/.local/share/hatch
-          key: pyright-${{ hashFiles('pyproject.toml', 'hatch.toml') }}
+          key: ruff-${{ hashFiles('pyproject.toml', 'hatch.toml') }}
 
       # check code with linter
       - name: Check the package code with the linter
