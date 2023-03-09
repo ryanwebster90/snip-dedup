@@ -1,5 +1,0 @@
-faiss
-numpy
-torch
-fire
-pandas

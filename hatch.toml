@@ -1,8 +1,20 @@
+# Config file specific to the hatch project manager.
+# Contains build rules and other scripts.
+
+# Build source distribution
 [build.targets.sdist]
 exclude = [
   "/.github",
   "/docs",
 ]
 
+# Build wheel distribution
 [build.targets.wheel]
 packages = ["snip_dedup"]
+
+# Check linting and formatting
+# These scripts need "pyright", "ruff" and "black" to be installed
+[envs.default.scripts]
+check = "pyright --warnings snip_dedup/"
+lint = "ruff check snip_dedup/"
+format = "black --check snip_dedup/"
