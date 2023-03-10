@@ -21,8 +21,8 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      # restore tooling installation cache
-      - uses: actions/cache/restore@v3
+      # cache tooling installation
+      - uses: actions/cache@v3
         with:
           path: |
             ~/.cache/pip
@@ -38,15 +38,6 @@ jobs:
           pipx install hatch
           pipx install pyright
           pipx install ruff
-
-      # cache tooling installation
-      - uses: actions/cache/save@v3
-        with:
-          path: |
-            ~/.cache/pip
-            ~/.local/pipx
-            ~/.local/bin
-          key: tooling-${{ env.TOOLING_CACHE_KEY }}
 
   build:
     name: Build snip-dedup package
