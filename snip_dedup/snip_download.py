@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 
 
-def snip_download(outfolder="data/downloaded", start=0, end=2313, dl_dedup_set=True):
+def snip_download(outfolder='data/downloaded', start=0, end=2313, dl_dedup_set=True):
     """Download and deduplicate a dataset.
 
     Parameters
@@ -29,7 +29,7 @@ def snip_download(outfolder="data/downloaded", start=0, end=2313, dl_dedup_set=T
     os.makedirs(metadata_dir, exist_ok=True)
 
     if dl_dedup_set:
-        print("downloading dedup set...")
+        print(f"downloading dedup set...")
         url = "https://huggingface.co/datasets/fraisdufour/snip-dedup/resolve/main/is_dup_mlp_1024_128_gelu_snn_2layer_notext.npy"
         response = requests.get(url)
         open(dedup_set_path, "wb").write(response.content)
