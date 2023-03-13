@@ -2,6 +2,7 @@
 
 from snip_dedup.snip_download import snip_download
 from snip_dedup.snip_compress import snip_compress
+from snip_dedup.snip_index import snip_index
 import fire
 
 
