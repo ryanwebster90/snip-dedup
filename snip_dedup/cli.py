@@ -11,6 +11,7 @@ def main():
         {
             "download": snip_download,
             "compress": snip_compress,
+            "index": snip_index,
         }
     )
 
