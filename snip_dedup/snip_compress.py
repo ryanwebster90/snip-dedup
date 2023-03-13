@@ -39,14 +39,11 @@ def snip_compress(feats_folder, snip_feats_folder='snip_feats/', model_folder='m
     if download_models:
         print("downloading snip artifact...")
         os.makedirs(model_folder,exist_ok=True)
-        # download index and net
-        # url = "https://huggingface.co/datasets/fraisdufour/snip-dedup/resolve/main/index/snip_vitl14_deep_IVFPQ_M4_base.index"
-        # response = requests.get(url)
-        # open(os.path.join(model_folder,'snip_vitl14_deep_IVFPQ_M4_base.index'), "wb").write(response.content)
-        
+        # download the snip net
         url = f"https://huggingface.co/datasets/fraisdufour/snip-dedup/resolve/main/models/{snip_model}.pth"
         response = requests.get(url)
         open(os.path.join(model_folder,f'{snip_model}.pth'), "wb").write(response.content)
+    #TODO: load model
     
     # load snip net
     net = torch.load(os.path.join(model_folder,f'{snip_model}.pth')).eval().cuda()
