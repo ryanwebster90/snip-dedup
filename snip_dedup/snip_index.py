@@ -37,6 +37,8 @@ def snip_index(feats_folder, model_folder='models/', snip_index='snip_vitl14_dee
     # load snip net
     base_index_file = os.path.join(model_folder, f'{snip_index}.index')
     index = faiss.read_index(base_index_file)
+    
+    # TODO: add option for cpu (will be quite slow however)
     res = faiss.StandardGpuResources()
     index = faiss.index_cpu_to_gpu(res,0,index)
     
