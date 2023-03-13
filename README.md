@@ -96,9 +96,9 @@ Remark that these can usually get installed in your editor, such as VS Code, to 
 Once you have installed them (suggested via [pipx][pipx]), you can check that the code is consistent with:
 
 ```sh
-hatch run check  # check for mistakes via static analysis
-hatch run format # check formatting of all python files
-hatch run lint   # check linting rules
+hatch run check           # check for mistakes via static analysis with pyright
+black --check snip_dedup/ # check formatting of all python files
+ruff check snip_dedup/    # check linting rules
 ```
 
 STILL TODO:
