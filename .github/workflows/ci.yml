@@ -5,35 +5,137 @@ on:
   push:
     branches: [ main ]
 
+env:
+  PYTHON_VERSION: '3.8'
+  TOOLING_CACHE_KEY: '006' # increment to force new cache creation
+  PIPX_HOME: /home/runner/.local/pipx
+  PIPX_BIN_DIR: /home/runner/.local/bin
+
 jobs:
-  build:
-    name: Build snip-dedup package
+  tooling-install:
+    name: Install and cache tooling for all other jobs
     runs-on: ubuntu-latest
     steps:
-      # git clone the repository
-      - uses: actions/checkout@v3
-
-      # install python (would be nice if this supported hatch)
+      # install python
       - uses: actions/setup-python@v4
         with:
-          python-version: '3.8'
+          python-version: ${{ env.PYTHON_VERSION }}
 
-      # cache package dependencies
+      # cache tooling installation
       - uses: actions/cache@v3
         with:
           path: |
             ~/.cache/pip
             ~/.local/pipx
-            ~/.local/share/hatch
-          key: ${{ matrix.build }}-build-${{ hashFiles('pyproject.toml', 'hatch.toml') }}
+            ~/.local/bin
+          key: tooling-${{ env.TOOLING_CACHE_KEY }}
 
-      # install hatch via pipx to have it isolated
-      - name: Install pipx & hatch
+      # install tooling via pipx to have them isolated
+      - name: Install pipx & tooling
+        run: |
+          python -m pip install --user pipx
+          python -m pipx ensurepath
+          pipx install hatch
+          pipx install pyright
+          pipx install ruff
+
+  build:
+    name: Build snip-dedup package
+    needs: tooling-install
+    runs-on: ubuntu-latest
+    steps:
+      # git clone the repository
+      - uses: actions/checkout@v3
+
+      # install python
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      # restore tooling installation cache
+      - uses: actions/cache/restore@v3
+        with:
+          path: |
+            ~/.cache/pip
+            ~/.local/pipx
+            ~/.local/bin
+          key: tooling-${{ env.TOOLING_CACHE_KEY }}
+          restore-keys: tooling
+
+      # install hatch via pipx (where we cached it)
+      - name: Install hatch
         run: |
           python -m pip install --user pipx
           python -m pipx ensurepath
           pipx install hatch
 
+      # cache dependencies
+      - uses: actions/cache@v3
+        with:
+          path: ~/.local/share/hatch
+          key: build-${{ hashFiles('pyproject.toml', 'hatch.toml') }}
+
       # build the python package
       - name: Build the snip-dedup package
         run: hatch build
+  
+  check-format:
+    name: Check that code is formatted with Black
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: psf/black@stable
+        with:
+          src: "./snip_dedup/"
+
+  check-pyright:
+    name: Check that the code passes all the pyright checks
+    needs: tooling-install
+    runs-on: ubuntu-latest
+    steps:
+      # git clone the repository
+      - uses: actions/checkout@v3
+
+      # install python
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      # restore tooling installation cache
+      - uses: actions/cache/restore@v3
+        with:
+          path: |
+            ~/.cache/pip
+            ~/.local/pipx
+            ~/.local/bin
+          key: tooling-${{ env.TOOLING_CACHE_KEY }}
+          restore-keys: tooling
+
+      # install pyright via pipx (where we cached it)
+      - name: Install pyright
+        run: |
+          python -m pip install --user pipx
+          python -m pipx ensurepath
+          pipx install hatch
+          pipx install pyright
+
+      # cache dependencies
+      - uses: actions/cache@v3
+        with:
+          path: ~/.local/share/hatch
+          key: pyright-${{ hashFiles('pyproject.toml', 'hatch.toml') }}
+
+      # check code with pyright
+      - name: Check the package code with pyright
+        run: hatch run check
+
+  check-lint:
+    name: Check that the code pass the linter checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - run: pip install ruff
+      - run: ruff check --format=github snip_dedup/
