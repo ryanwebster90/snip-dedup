@@ -99,7 +99,9 @@ def snip_compress(
     net = torch.load(snip_model_path).eval().cuda()
 
     # Compute SNIP features for all shards
-    print(f"Start computing SNIP features for shards {start_shard} to {end_shard} (excluded)")
+    print(
+        f"Start computing SNIP features for shards {start_shard} to {end_shard} (excluded)"
+    )
     for shard in range(start_shard, end_shard):
         print(f"  Computing SNIP features for shard {shard} ...")
         # this is normally the bottleneck
