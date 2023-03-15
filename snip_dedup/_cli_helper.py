@@ -2,43 +2,43 @@ import sys
 import string
 
 
-def validate_shards(shards):
-    if type(shards) is int:
+def validate_parts(parts):
+    if type(parts) is int:
         sys.exit(
-            "Single value is not accepted for --shards as it's ambiguous between wanting only that exact shard or that number of shards starting from 0. Please use a range instead like 0:2"
+            "Single value is not accepted for --parts as it's ambiguous between wanting only that exact part or that number of parts starting from 0. Please use a range instead like 0:2"
         )
-    shards_bounds = shards.split(":")
+    parts_bounds = parts.split(":")
     try:
-        shards_bounds = [int(shard) for shard in shards_bounds]
+        parts_bounds = [int(part) for part in parts_bounds]
     except Exception:
         sys.exit(
-            f'The shards pattern "{shards}" is not valid. It should be a valid range such as "0:2" or "14:42"'
+            f'The parts pattern "{parts}" is not valid. It should be a valid range such as "0:2" or "14:42"'
         )
-    if len(shards_bounds) == 0:
-        sys.exit("The --shards argument cannot be empty")
-    elif len(shards_bounds) == 1:
+    if len(parts_bounds) == 0:
+        sys.exit("The --parts argument cannot be empty")
+    elif len(parts_bounds) == 1:
         sys.exit(
-            "Single value is not accepted for --shards as it's ambiguous between wanting only that exact shard or that number of shards starting from 0. Please use a range instead like 0:2"
+            "Single value is not accepted for --parts as it's ambiguous between wanting only that exact part or that number of parts starting from 0. Please use a range instead like 0:2"
         )
-    elif len(shards_bounds) > 2:
+    elif len(parts_bounds) > 2:
         sys.exit(
-            "Ranges with more than 2 parts, such as 0:2:14 are not valid for --shards. Please limit yourself with simple ranges such as 0:14"
+            "Ranges with more than 2 parts, such as 0:2:14 are not valid for --parts. Please limit yourself with simple ranges such as 0:14"
         )
-    start_shard, end_shard = shards_bounds
-    if start_shard < 0 or end_shard < 0:
-        sys.exit("Only positive integers are allowed for --shards, such as 0:14")
-    if end_shard <= start_shard:
+    start_part, end_part = parts_bounds
+    if start_part < 0 or end_part < 0:
+        sys.exit("Only positive integers are allowed for --parts, such as 0:14")
+    if end_part <= start_part:
         sys.exit(
-            'The --shards argument must be of the shape "s:e" with s < e, such as "0:1" or "14:42". The "e" bound is excluded.'
+            'The --parts argument must be of the shape "s:e" with s < e, such as "0:1" or "14:42". The "e" bound is excluded.'
         )
-    return start_shard, end_shard
+    return start_part, end_part
 
 
-def validate_shard_format(pattern):
+def validate_part_format(pattern):
     format_variables = [
         tup[1] for tup in string.Formatter().parse(pattern) if tup[1] is not None
     ]
-    if len(format_variables) != 1 or format_variables[0] != "shard":
+    if len(format_variables) != 1 or format_variables[0] != "part":
         sys.exit(
-            f'Your pattern "{pattern}" is not valid as it should contain the "shard" variable such as "{{shard:04d}}.npy".'
+            f'Your pattern "{pattern}" is not valid as it should contain the "part" variable such as "{{part:04d}}.npy".'
         )

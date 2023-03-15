@@ -53,24 +53,24 @@ cd ..
 snip compress --help # display the help for the snip compress command
 snip compress \
   --snip_model_path snip_models/snip_vitl14_128_deep.pth \
-  --shards 0:2 \
-  --clip_feats clip_feats/img_emb_{shard:04d}.npy \
-  --snip_feats_out snip_feats/{shard:04d}.npy
+  --parts 0:2 \
+  --clip_feats clip_feats/img_emb_{part:04d}.npy \
+  --snip_feats_out snip_feats/{part:04d}.npy
 ```
 
 Finally, after compressing with SNIP, we can build our index.
-Since the index is much smaller than the features, we can group shards in the index.
-In this example, we pack them by 2 with `--index_shard_packing 2`
+Since the index is much smaller than the features, we can group multiple parts in each index shard.
+In this example, we group them by 2 with `--shard_size 2`
 
 ```sh
 # Build the index for the SNIP features
 snip index --help # display the help for the snip index command
 snip index \
-  --snip_shards 0:2 \
-  --snip_feats snip_feats/{shard:04d}.npy \
+  --parts 0:2 \
+  --snip_feats snip_feats/{part:04d}.npy \
   --snip_base_index_path snip_models/snip_vitl14_deep_IVFPQ_M4_base.index \
   --index_outdir snip_index \
-  --index_shard_packing 2
+  --shard_size 2
 # will build file snip_index/0000_0001.index
 ```
 
