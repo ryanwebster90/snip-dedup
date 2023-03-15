@@ -62,8 +62,8 @@ Other:
 
 By analyzing the most duplicated images, we have found several more images verbatim copied by Stable Diffusion, posing a copyright problem:
 
-![sylvester stallone](https://github.com/ryanwebster90/snip-dedup/blob/main/sylvester_overfit.jpeg)
-![hopped up logo](https://github.com/ryanwebster90/snip-dedup/blob/main/overfit_2.jpeg)
+![sylvester_overfit](https://user-images.githubusercontent.com/2905865/225423740-e0befaba-cb74-44bf-9a64-f5dd9cbd4c33.jpeg)
+![hopped up logo](https://user-images.githubusercontent.com/2905865/225423836-7c64428b-6782-4452-8d29-1628dc192c6c.jpeg)
 
 
 ## Note on False positives
