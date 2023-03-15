@@ -22,7 +22,7 @@ def compute_feats_for_chunk(net, chunk, batch_size=256):
 
 
 def snip_compress(
-    snip_model_path,
+    snip_model_path="snip_models/snip_vitl14_128_deep.pth",
     shards="0:2",
     clip_feats="clip_feats/{shard:04d}.npy",
     snip_feats_out="snip_feats/{shard:04d}.npy",
