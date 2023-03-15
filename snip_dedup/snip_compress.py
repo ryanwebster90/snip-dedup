@@ -11,7 +11,7 @@ def _validate_shards(shards):
     shards_bounds = shards.split(":")
     try:
         shards_bounds = [int(shard) for shard in shards_bounds]
-    except:
+    except Exception:
         sys.exit(
             f'The shards pattern "{shards}" is not valid. It should be a valid range such as "0:" or "14:42"'
         )
@@ -90,7 +90,7 @@ def snip_compress(
         first_snip_shard_path = snip_feats_out.format(shard=start_shard)
         snip_out_parent_dir = os.path.dirname(first_snip_shard_path)
         os.makedirs(snip_out_parent_dir, exist_ok=True)
-    except:
+    except Exception:
         sys.exit(
             f'Something is wrong with the output file paths specified for --snip_feats_out "{snip_feats_out}"'
         )
