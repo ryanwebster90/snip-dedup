@@ -1,90 +1,87 @@
-"""snip compress"""
-import requests
+"""snip index"""
+
+import sys
 import os
 import os.path
 import fire
 import numpy as np
-import glob
 import faiss
+
+from . import _cli_helper
 
 
 def snip_index(
-    feats_folder,
-    model_folder="models/",
-    snip_index="snip_vitl14_deep_IVFPQ_M4_base",
-    download_models=True,
-    feats_start=0,
-    feats_end=-1,
-    shard_folder="none",
-    shard_every=1,
+    snip_shards="0:2",
+    snip_feats="snip_feats/{shard:04d}.npy",
+    snip_base_index_path="snip_models/snip_vitl14_deep_IVFPQ_M4_base.index",
+    index_outdir="snip_index",
+    index_shard_packing=1,
 ):
-    """Compress frozen clip features with SNIP
+    """Build a sharded index from SNIP compressed features
 
     Parameters
     ----------
-    feats_folder : str
-        folder with .npy snip features
-    model_folder : str
-        folder with snip models
-    snip_index : str, optional
-        snip index built on top of compressed feats
-    download_models : bool, optional
-        download the model and index
-    shard_folder : str, optional
-        output folder for the computed shards
-    shard_every : int, optional
-        How often to save shards
+    snip_shards : str
+        Shards to index, using a slice notation, such as 0:2 or 14:42
+    snip_feats : str
+        Pattern referencing the path to the SNIP features shards.
+        You are expected to use the "shard" variable with formatting options, such as "{shard:03d}.npy" which will be replaced by "001.npy" when shard==1.
+    snip_base_index_path : str
+        Path to the base index, might be something like: snip_models/snip_vitl14_deep_IVFPQ_M4_base.index
+    index_outdir : str
+        Directory where the computed index shards will be saved.
+    index_shard_packing : int
+        Number of SNIP shards to group per index shard.
+        Since the index is much smaller than the features, we can pack many feature shards in a single index shard.
     """
-
-    if download_models:
-        print("downloading snip index...")
-        os.makedirs(model_folder, exist_ok=True)
-        url = f"https://huggingface.co/datasets/fraisdufour/snip-dedup/resolve/main/index/{snip_index}.index"
-        response = requests.get(url)
-        open(os.path.join(model_folder, f"{snip_index}.index"), "wb").write(
-            response.content
+    # Check that the path for the base index passed as argument is valid
+    if not os.path.isfile(snip_base_index_path):
+        sys.exit(
+            f'The base index file "{snip_base_index_path}" does not exist or is not readable.'
         )
-    # TODO: just load models
 
-    # load snip net
-    base_index_file = os.path.join(model_folder, f"{snip_index}.index")
-    index = faiss.read_index(base_index_file)
+    # Check that the shards argument is correct
+    start_shard, end_shard = _cli_helper.validate_shards(snip_shards)
+
+    # Check that the SNIP features exist
+    _cli_helper.validate_shard_format(snip_feats)
+
+    # Check that the starting SNIP feature shard is a multiple of the index shard packing.
+    # Otherwise, it's probably an off-by-one mistake
+    if start_shard % index_shard_packing != 0:
+        sys.exit(
+            f"WARNING: your starting SNIP shard ({start_shard}) is not a multiple of your packing argument ({index_shard_packing}). You might be doing a mistake so please double check."
+        )
 
     # TODO: add option for cpu (will be quite slow however)
     res = faiss.StandardGpuResources()
-    index = faiss.index_cpu_to_gpu(res, 0, index)
 
-    # subsample feat files
-    feat_files = sorted(glob.glob(feats_folder + "/*.npy"))
-    feats_end = len(feat_files) if feats_end < 0 else feats_end
-    feat_files = feat_files[feats_start:feats_end]
+    # Create the output directory for computed index shards
+    os.makedirs(index_outdir, exist_ok=True)
 
-    # make folder to save index shards
-    if shard_folder == "none":
-        shard_folder = os.path.join(model_folder, f"{snip_index}_shards/")
+    # Batch shards into groups
+    snip_shards = list(range(start_shard, end_shard))
+    batched_snip_shards = [
+        snip_shards[i : i + index_shard_packing]
+        for i in range(0, len(snip_shards), index_shard_packing)
+    ]
 
-    # make snip feats folder
-    os.makedirs(f"{shard_folder}", exist_ok=True)
+    # Load SNIP base index
+    base_index = faiss.read_index(snip_base_index_path)
 
-    for ffi, ff in enumerate(feat_files):
-        print(
-            f"adding snip feat {ffi+feats_start}/{len(feat_files)+feats_start} to index"
+    # Compute an index for each SNIP shards batch
+    for shards_batch in batched_snip_shards:
+        index = faiss.index_cpu_to_gpu(res, 0, base_index)
+        for snip_shard_id in shards_batch:
+            print(f"Indexing SNIP shard {snip_shard_id} ...")
+            snip_shard = np.load(snip_feats.format(shard=snip_shard_id))
+            index.add(snip_shard)
+        batch_str = "_".join([f"{id:04d}" for id in shards_batch])
+        print(f"Writing index for shards {shards_batch} ...")
+        faiss.write_index(
+            faiss.index_gpu_to_cpu(index),
+            os.path.join(index_outdir, f"{batch_str}.index"),
         )
-        # this is normally the bottleneck
-        feat_chunk = np.load(ff)
-
-        # add to index (todo: benchmark and progress)
-        index.add(feat_chunk)
-
-        if (ffi + 1) % shard_every == 0:
-            # write index shard, name according to the feature files within the shard
-            faiss.write_index(
-                faiss.index_gpu_to_cpu(index),
-                f"{shard_folder}{ffi + feats_start - shard_every + 1}_{ffi + feats_start + 1}_shard.index",
-            )
-
-            # re-load the base index for the new shard
-            index = faiss.read_index(base_index_file)
 
 
 if __name__ == "__main__":
