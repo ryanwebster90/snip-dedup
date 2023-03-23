@@ -4,10 +4,22 @@
 [![linting - Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v0.json)](https://github.com/charliermarsh/ruff)
 [![format - Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![license - MIT](https://img.shields.io/badge/license-MIT-9400d3.svg)](https://spdx.org/licenses/)
+[![license - MIT](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1nKccWcCz566qDg3AohTV-zjBn7u_INnG?usp=sharing)
 
-SNIP is a very compact index (25GB) that has found roughly half a billion duplicates on the LAION-2B-en dataset. You may download the de-duplicated dataset below.
+## This repo is a WIP
 
-SNIP de-duplicated L2B on a standard home computer, taking just several days. We believe the community will benefit from such a dataset, in light of recent research showing the copyright and privacy risks associated with training generative models on highly duplicated datasets, as well as SNIP for a de-duplication, compression and retrieval tool.
+This repo is a WIP, but the main functionalities will be:
+
+- [x] Download de-duplicated versions of LAION-2B-en (Better versions coming soon...)
+- [ ] Download small indices (25-40GB) for retrieval / dataset creation / de-duplciation
+- [ ] Compress features using pretrained SNIP networks (for ViT-H-14, ViT-L14, ViT-B-32)
+- [x] Read our research paper
+- [ ] Train SNIP on your CLIP features
+- [ ] Run a de-duplication of your dataset using our de-dup code
+
+SNIP is a technique to compress CLIP features. It is competitive with previous works for large scale retrieval of deep features, and has some nice properties for multi-modal features. Read more about it [here](https://arxiv.org/abs/2303.12733). 
+
+We used SNIP to perform several de-duplications of LAION-2B-en. Our latest de-duplication found roughly 700M duplicates (we define total duplicates as total samples - duplicate groups). SNIP performs well at high compression ratios and can run at very high q/s with low memory.
 
 ## Install
 
@@ -28,23 +40,16 @@ snip download --start 0 --end 10
 
 Then, you may download (deduplicated) laion2b images with the awesome [img2dataset](https://github.com/rom1504/img2dataset).
 
-You may check the fidelity of the duplicates by randomly sampling labeled duplicates, and using SNIP to detect its dup. You may do that with retrieve_dup_urls_demo.py (note you will need the original metadata files for this)
+See the colab [![license - MIT](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1nKccWcCz566qDg3AohTV-zjBn7u_INnG?usp=sharing) for a demo on search.
 
-## Roadmap
+## What is a Duplicate?
 
-You can also do with SNIP (coming soon...)
-- [ ] Train SNIP Indices on your features
-- [ ] Download full or sharded SNIP indices for various CLIP networks
-- [ ] Do semantic search with extremely compact indices (25 GB or less) on billions of images
-- [ ] Compress your features with SNIP descriptors
-- [ ] Read our research paper
+In our first iteration, we merely marked duplicates pairwise, and remove one sample from a duplicate pair (the above code downloads a binary array, for samples to remove). In our latest run, we group together sets of duplicates through transitive closure on the duplication graph, i.e. computing connected components. We have found many more duplicates this way, and will also release this set, as it provides some useful information about the dataset. 
 
-## About
 
-** DISCLAIMER ** 
-Use at your own risk. Help for better de-duiplication (higher acc, higher recall) is very much appreciated. Taking raw CLIP features as the ground truth for exact duplicates, we get nearly 81% precision (and likely much higher for near duplicates, see below).
+## Misc files (old)
 
-We release this index for public use and exploration of the LAION-2B-en dataset (more indices coming soon). Soon we will release tools to train your own SNIP indices as well as our scientific paper discussing the method in more detail.
+We release this index for public use and exploration of the LAION-2B-en dataset.
 
 You may find the following necessary files here:
 
@@ -114,3 +119,16 @@ STILL TODO:
 [ruff]: https://github.com/charliermarsh/ruff
 [pipx]: https://github.com/pypa/pipx
 [docstring]: https://numpydoc.readthedocs.io/en/latest/format.html
+
+## Citation
+```
+@misc{webster2023deduplication,
+      title={On the De-duplication of LAION-2B}, 
+      author={Ryan Webster and Julien Rabin and Loic Simon and Frederic Jurie},
+      year={2023},
+      eprint={2303.12733},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV}
+}
+```
+
