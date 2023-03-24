@@ -44,7 +44,27 @@ See the colab [![license - MIT](https://colab.research.google.com/assets/colab-b
 
 ## What is a Duplicate?
 
-In our first iteration, we merely marked duplicates pairwise, and remove one sample from a duplicate pair (the above code downloads a binary array, for samples to remove). In our latest run, we recorded the entire adjacency matrix of duplication. For instance, suppose SNIP has labeled feature $k$ as a duplicate with feature $j$. Then $A[k,j] = A[j,k] = 1$ in the adjacency matrix. We're currently having trouble computing the full connected components of this matrix, as it is quite large, and standard libraries consume all our available RAM, and do not allow disk mapping. We implemented a disk-mapped vcersion, for which we'll update the repository.
+In our first iteration, we merely marked duplicates pairwise, and remove one sample from a duplicate pair (the above code downloads a binary array, for samples to remove). In our latest run, we recorded the entire adjacency matrix of duplication. For instance, suppose SNIP has labeled feature $k$ as a duplicate with feature $j$. Then $A[k,j] = A[j,k] = 1$ in the adjacency matrix. We're currently having trouble computing the full connected components of this matrix, see [this issue](https://github.com/ryanwebster90/snip-dedup/issues/7#issue-1639736690). 
+
+If you allow connected components with only one node, Then to compute the number of "unique" samples, you simply take one from each duplicate set, say $|\mathcal{C}|$ sets, with $N$ nodes is $D := N - |\mathcal{C}|$ duplicates.
+
+### Approximate CCs of Duplicates
+
+Currently, we have an approximation of the CC of the duplicates, as follows. During the de-duplication, we label nodes as follows. Suppose we are at node $n$, the pseudo code for one step of labeling is as follows
+```python
+labels = np.arange(0,N)
+...
+d,i = index.search(feats[n,:],k)
+dups = get_dups(d,i) #Use adaptive threshhold on ADC (see paper)
+label[dups] = resolve_labels_one_step(dups)
+```
+Where `N` is number of nodes (2B for L2B). Here `resolve_labels_one_step` will simply re-write any node that is unlabeled to be the current node $n$. This can be thought of as a tree. We then connect nodes with common ancestors with a fixed point
+```python
+while True:
+      label = label[label]
+```
+
+We have
 
 ## Misc files (old)
 
