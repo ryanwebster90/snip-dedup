@@ -44,8 +44,7 @@ See the colab [![license - MIT](https://colab.research.google.com/assets/colab-b
 
 ## What is a Duplicate?
 
-In our first iteration, we merely marked duplicates pairwise, and remove one sample from a duplicate pair (the above code downloads a binary array, for samples to remove). In our latest run, we group together sets of duplicates through transitive closure on the duplication graph, i.e. computing connected components. We have found many more duplicates this way, and will also release this set, as it provides some useful information about the dataset. 
-
+In our first iteration, we merely marked duplicates pairwise, and remove one sample from a duplicate pair (the above code downloads a binary array, for samples to remove). In our latest run, we recorded the entire adjacency matrix of duplication. For instance, suppose SNIP has labeled feature $k$ as a duplicate with feature $j$. Then $A[k,j] = A[j,k] = 1$ in the adjacency matrix. We're currently having trouble computing the full connected components of this matrix, as it is quite large, and standard libraries consume all our available RAM, and do not allow disk mapping. We implemented a disk-mapped vcersion, for which we'll update the repository.
 
 ## Misc files (old)
 
