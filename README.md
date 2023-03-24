@@ -64,7 +64,7 @@ while True:
       label = label[label]
 ```
 
-The labels of the above loop can be found on huggingface (vitl14_labels)[https://huggingface.co/datasets/fraisdufour/snip-dedup/resolve/main/representatives/representatives_vitl14_fixed_pt.npy].
+The labels of the above loop can be found on huggingface [vitl14_labels](https://huggingface.co/datasets/fraisdufour/snip-dedup/resolve/main/representatives/representatives_vitl14_fixed_pt.npy).
 
 ## Misc files (old)
 
