@@ -50,7 +50,7 @@ If you allow connected components with only one node, Then to compute the number
 
 ### Approximate CCs of Duplicates
 
-Currently, we have an approximation of the CC of the duplicates, as follows. During the de-duplication, we label nodes as follows. Suppose we are at node $n$, the pseudo code for one step of labeling is as follows
+Currently, we have an approximation of the CC of the duplicates. During the de-duplication, we label nodes as follows. Suppose we are at node $n$, the pseudo code for one step of labeling is calculated as
 ```python
 labels = np.arange(0,N)
 ...
