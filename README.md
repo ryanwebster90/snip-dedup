@@ -8,10 +8,8 @@
 
 ## This repo is a WIP
 
-This repo is a WIP, but the main functionalities will be:
+You no longer can filter the LAION dataset to remove duplicates, as LAION disabled the webdataset on huggingface. I'll focus on adding some functionality for deduplication for future webdatasets using clip features.
 
-- [x] Download de-duplicated versions of LAION-2B-en (Better versions coming soon...)
-- [ ] Download small indices (25-40GB) for retrieval / dataset creation / de-duplciation
 - [ ] Compress features using pretrained SNIP networks (for ViT-H-14, ViT-L14, ViT-B-32)
 - [x] Read our research paper
 - [ ] Train SNIP on your CLIP features
@@ -19,7 +17,7 @@ This repo is a WIP, but the main functionalities will be:
 
 SNIP is a technique to compress CLIP features. It is competitive with previous works for large scale retrieval of deep features, and has some nice properties for multi-modal features. Read more about it [here](https://arxiv.org/abs/2303.12733). 
 
-We used SNIP to perform several de-duplications of LAION-2B-en. Our latest de-duplication found roughly 700M duplicates (we define total duplicates as total samples - duplicate groups). SNIP performs well at high compression ratios and can run at very high q/s with low memory.
+We used SNIP together with the faiss library to deduplicate a billions scale dataset, and found a high level of duplication (roughly 700M / 2 billion). This webdataset is no longer being distributed by laion.
 
 ## Install
 
@@ -66,18 +64,6 @@ while True:
 
 The labels of the above loop can be found on huggingface [vitl14_labels](https://huggingface.co/datasets/fraisdufour/snip-dedup/resolve/main/representatives/representatives_vitl14_fixed_pt.npy).
 
-## Misc files (old)
-
-We release this index for public use and exploration of the LAION-2B-en dataset.
-
-You may find the following necessary files here:
-
-[Binary array of De-duplicated Images](https://drive.google.com/file/d/1RYDylZKaPyaVs5YNwIrGqHU2BewdFwxY/view?usp=sharing)
-
-[SNIP index](https://drive.google.com/file/d/1RYDylZKaPyaVs5YNwIrGqHU2BewdFwxY/view?usp=sharing)
-
-[SNIP descriptor](https://drive.google.com/file/d/1QTA9yWevwPMhvMW8P5mAIBDy42xUpr-m/view?usp=share_link)
-
 Other:
 
 [cumulative sizes of features (for indexing sharded files)](https://drive.google.com/file/d/1OdVt5rjYw55XfMhsQSdqcVOP7lG2qj4W/view?usp=sharing)
@@ -101,7 +87,7 @@ you may check a list of (randomly sampled) detected duplicate pairs [here](https
 
 ## Semantic Search
 
-SNIP can also be used for semantic search. At just 25GB, it still can return the same k-NN's compared to exhaustive search roughly a third of the time, over 2.15B database vectors. 
+You may use the compressed features to do semantic search with faiss (see for instance, the clip-retrieval repository).
 
 ## Contribute
 
